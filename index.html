@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiredlabs | Built to Perform, Wired to Scale</title>
+    <meta name="description" content="Wiredlabs - Premium AI Systems and Scalable Architecture for Global Innovation.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&family=Syncopate:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <div class="bg-ambient"></div>
+    <div class="bg-grid"></div>
+
+    <nav class="dynamic-island">
+        <div class="nav-inner">
+            <a href="#" class="logo magnetic">
+                <img src="/logo.png" alt="Wiredlabs" style="height: 50px; width: auto; object-fit: contain;">
+            </a>
+            <div class="nav-links">
+                <a href="#work" class="magnetic">Work</a>
+                <a href="#services" class="magnetic">Services</a>
+                <a href="#about" class="magnetic">About</a>
+            </div>
+            <a href="#contact" class="btn btn-primary nav-cta magnetic">Start Setup</a>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="hero-video-container">
+                <!-- Using a canvas for the scroll-scrubbed image sequence/video -->
+                <canvas id="hero-canvas"></canvas>
+            </div>
+            <div class="container hero-content">
+                <h1 class="reveal">Wiredlabs</h1>
+                <p class="reveal">Built to perform, Wired to scale</p>
+                <div class="cta-group reveal">
+                    <a href="#work" class="btn btn-primary">Explore Innovation</a>
+                    <a href="#services" class="btn btn-outline">See Solutions</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services">
+            <div class="container">
+                <h2 class="reveal">Services</h2>
+                <div class="services-grid">
+                    <div class="service-card reveal">
+                        <img src="/service-arch.png" alt="Website Building Icon" class="service-icon">
+                        <h3>Website Building</h3>
+                        <p>Website building along lead gen and outreach and follow up.</p>
+                    </div>
+                    <div class="service-card reveal">
+                        <img src="/service-data.png" alt="Automations Icon" class="service-icon">
+                        <h3>Automations</h3>
+                        <p>Workflow, operations and sales automations.</p>
+                    </div>
+                    <div class="service-card reveal">
+                        <img src="/service-ai.png" alt="AI Agents Icon" class="service-icon">
+                        <h3>AI Agents</h3>
+                        <p>AI customer support agents dev.</p>
+                    </div>
+                    <div class="service-card reveal">
+                        <img src="/service-ai.png" alt="Internal AI Icon" class="service-icon">
+                        <h3>Custom AI</h3>
+                        <p>Custom internal AI systems.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Proof of Execution Section -->
+        <section id="work">
+            <div class="container">
+                <h2 class="reveal">Proof of Execution</h2>
+                <div class="project-grid">
+                    <div class="project-tile reveal"
+                        onclick="window.open('https://aocc-virtual-coo.vercel.app/', '_blank')"
+                        style="background-image: url('/virtual_coo_bg.png'); background-size: cover; background-position: center;">
+                        <div class="tile-overlay">
+                            <h3>Virtual COO</h3>
+                            <p>AI-driven operational management</p>
+                        </div>
+                    </div>
+                    <div class="project-tile reveal"
+                        onclick="window.open('https://clientflow-eta.vercel.app', '_blank')"
+                        style="background-image: url('/ai_scrapper_bg.png'); background-size: cover; background-position: center;">
+                        <div class="tile-overlay">
+                            <h3>AI Clients Scrapper</h3>
+                            <p>Automated lead extraction</p>
+                        </div>
+                    </div>
+                    <div class="project-tile reveal"
+                        onclick="window.open('https://anjansaimerla.github.io/SSDP/', '_blank')"
+                        style="background-image: url('/offset_printing_bg.png'); background-size: cover; background-position: center;">
+                        <div class="tile-overlay">
+                            <h3>Offsetprinting Website</h3>
+                            <p>Premium platform website</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about">
+            <div class="container">
+                <h2 class="reveal">The Architecture</h2>
+                <div class="about-grid">
+                    <div class="about-tile tile-primary reveal project-tile tilt-enabled">
+                        <div class="tile-content">
+                            <h3>Growth Performance Agency</h3>
+                            <p>Wiredlabs specializes in high-scale intelligent systems. We bridge the gap between
+                                complex engineering and market-ready products, ensuring that every project is built to
+                                perform and wired to scale. We execute with precision and absolute disregard for
+                                mediocrity.</p>
+                        </div>
+                    </div>
+
+                    <div class="about-tile tile-secondary reveal project-tile tilt-enabled">
+                        <img src="/founder.png" alt="Founder Portrait" class="founder-img">
+                        <div class="tile-overlay">
+                            <h3>The Founder</h3>
+                            <p>Building systems that scale.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Get in Touch Section -->
+        <section id="contact" class="section-padded">
+            <div class="container">
+                <div class="contact-card reveal tilt-enabled">
+                    <div class="contact-header">
+                        <h2>Initialize Operations</h2>
+                        <p>Let's scale your vision. Secure a transmission link.</p>
+                    </div>
+
+                    <form id="contact-form" class="premium-form">
+                        <div class="form-row">
+                            <div class="form-group hover-focus">
+                                <label>name</label>
+                                <input type="text" name="name" placeholder="John Doe" required>
+                                <div class="input-line"></div>
+                            </div>
+                            <div class="form-group hover-focus">
+                                <label>email</label>
+                                <input type="email" name="email" placeholder="john@example.com" required>
+                                <div class="input-line"></div>
+                            </div>
+                        </div>
+                        <div class="form-group hover-focus">
+                            <label>Objective Parameters</label>
+                            <textarea name="message" placeholder="Define execution scope..." rows="4"
+                                required></textarea>
+                            <div class="input-line"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary magnetic" style="width: 100%;">Transmit
+                            Data</button>
+                        <div id="form-status" class="form-status"
+                            style="margin-top: 1rem; text-align: center; font-size: 0.85rem;"></div>
+                    </form>
+                    <div class="social-contact"
+                        style="text-align: center; margin-top: 2rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: var(--color-gold);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                        <span>contact us : <a href="https://instagram.com/wired_labs" target="_blank"
+                                style="color: var(--color-white); text-decoration: none; font-weight: 600;">wired_labs</a></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="/main.js"></script>
+</body>
+
+</html>
