@@ -17,86 +17,120 @@ const initHeroCanvas = () => {
     window.addEventListener('resize', resize);
     resize();
 
-    // Configuration for the "wired" look
-    const nodes = [];
-    const nodeCount = 60;
-    for (let i = 0; i < nodeCount; i++) {
-        nodes.push({
-            x: Math.random(),
-            y: Math.random(),
-            size: Math.random() * 2 + 1,
-            speed: Math.random() * 0.5 + 0.2
+    // Configuration for the "reactive orb"
+    const particles = [];
+    const numParticles = 800; // Dense sphere
+    
+    // Create Fibonacci sphere distribution
+    for (let i = 0; i < numParticles; i++) {
+        const phi = Math.acos(1 - 2 * (i + 0.5) / numParticles);
+        const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+        particles.push({
+            x: Math.sin(phi) * Math.cos(theta),
+            y: Math.sin(phi) * Math.sin(theta),
+            z: Math.cos(phi),
+            baseRadius: Math.random() * 1.5 + 1.0,
+            currentRadius: 0
         });
     }
 
-    const render = (progress) => {
+    // Mouse tracking
+    const mouse = { x: -9999, y: -9999 };
+    window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+    window.addEventListener('mouseleave', () => {
+        mouse.x = -9999;
+        mouse.y = -9999;
+    });
+
+    let time = 0;
+
+    const render = () => {
+        requestAnimationFrame(render);
+        time += 0.005;
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
-        const maxRadius = Math.max(canvas.width, canvas.height);
+        const radius = Math.min(canvas.width, canvas.height) * 0.35; // Orb size
 
         // Background Glow
-        const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, maxRadius * 0.8);
-        gradient.addColorStop(0, 'rgba(212, 175, 55, 0.05)');
-        gradient.addColorStop(1, 'rgba(10, 10, 11, 0)');
-        ctx.fillStyle = gradient;
+        const bgGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius * 1.5);
+        bgGradient.addColorStop(0, 'rgba(212, 175, 55, 0.05)');
+        bgGradient.addColorStop(1, 'rgba(10, 10, 11, 0)');
+        ctx.fillStyle = bgGradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Draw Nodes and Connections
-        ctx.strokeStyle = '#D4AF37';
-        ctx.fillStyle = '#D4AF37';
+        // Project and depth sort
+        const projected = particles.map(p => {
+            // Rotations
+            const cosY = Math.cos(time);
+            const sinY = Math.sin(time);
+            const cosX = Math.cos(time * 0.5);
+            const sinX = Math.sin(time * 0.5);
 
-        nodes.forEach((node, i) => {
-            // Calculate position with parallax and scroll influence
-            const scrollInfluence = progress * 500 * node.speed;
-            const x = (node.x * canvas.width + (scrollInfluence * (i % 2 === 0 ? 1 : -1))) % canvas.width;
-            const y = (node.y * canvas.height + scrollInfluence) % canvas.height;
+            // Apply Y rotation
+            let x1 = p.x * cosY - p.z * sinY;
+            let z1 = p.z * cosY + p.x * sinY;
 
-            // Draw Node
-            ctx.globalAlpha = 0.3 + (progress * 0.7);
-            ctx.beginPath();
-            ctx.arc(x, y, node.size, 0, Math.PI * 2);
-            ctx.fill();
+            // Apply X rotation
+            let y1 = p.y * cosX - z1 * sinX;
+            let z2 = z1 * cosX + p.y * sinX;
 
-            // Draw Connections
-            nodes.forEach((target, j) => {
-                if (i === j) return;
-                const tx = (target.x * canvas.width + (progress * 500 * target.speed * (j % 2 === 0 ? 1 : -1))) % canvas.width;
-                const ty = (target.y * canvas.height + (progress * 500 * target.speed)) % canvas.height;
-
-                const dist = Math.sqrt((x - tx) ** 2 + (y - ty) ** 2);
-                if (dist < 150) {
-                    ctx.globalAlpha = (1 - (dist / 150)) * 0.2 * (progress + 0.2);
-                    ctx.lineWidth = 0.5;
-                    ctx.beginPath();
-                    ctx.moveTo(x, y);
-                    ctx.lineTo(tx, ty);
-                    ctx.stroke();
-                }
-            });
+            return {
+                orig: p,
+                x: x1 * radius + centerX,
+                y: y1 * radius + centerY,
+                z: z2 * radius,
+                scale: (z2 / radius + 1) / 2 // 0 (back) to 1 (front)
+            };
         });
 
-        // Pulsating center ring
-        ctx.globalAlpha = 0.1 + (progress * 0.4);
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, 100 + (progress * 200), 0, Math.PI * 2);
-        ctx.stroke();
+        // Sort by Z to draw back to front
+        projected.sort((a, b) => a.z - b.z);
+
+        projected.forEach(p => {
+            // Distance from mouse to projected 2D center
+            const dx = p.x - mouse.x;
+            const dy = p.y - mouse.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            let targetRadius = p.orig.baseRadius;
+            let alpha = 0.3 + (p.scale * 0.7); // Front is opaque, back is faded
+            let isHovered = false;
+
+            // If it's on the front half of the orb and close to the mouse
+            if (p.z > 0 && dist < 120) {
+                const reaction = 1 - (dist / 120);
+                targetRadius += reaction * 4.5; // Grow larger
+                alpha = Math.min(1, alpha + reaction); // Max opacity
+                isHovered = true;
+            }
+
+            // Lerp radius for smooth transitions
+            p.orig.currentRadius += (targetRadius - p.orig.currentRadius) * 0.15;
+
+            // Draw dot
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.orig.currentRadius * Math.max(0.3, p.scale), 0, Math.PI * 2);
+            
+            if (isHovered) {
+                ctx.fillStyle = `rgba(255, 223, 115, ${alpha})`; // Bright yellow burst
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = 'rgba(255, 223, 115, 0.8)';
+            } else {
+                ctx.fillStyle = `rgba(212, 175, 55, ${alpha})`; // Normal Gold
+                ctx.shadowBlur = 0;
+            }
+            
+            ctx.fill();
+        });
     };
 
-    // Link scroll to canvas render
-    gsap.to({}, {
-        scrollTrigger: {
-            trigger: ".hero",
-            start: "top top",
-            end: "bottom top",
-            scrub: true,
-            onUpdate: (self) => render(self.progress)
-        }
-    });
-
-    render(0);
+    render();
 };
 
 // Premium Reveal Animations
