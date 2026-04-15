@@ -30,7 +30,8 @@ const initHeroCanvas = () => {
             y: Math.sin(phi) * Math.sin(theta),
             z: Math.cos(phi),
             baseRadius: Math.random() * 1.5 + 1.0,
-            currentRadius: 0
+            currentRadius: 0,
+            wasHovered: false
         });
     }
 
@@ -46,6 +47,7 @@ const initHeroCanvas = () => {
     });
 
     let time = 0;
+    const blasts = [];
 
     const render = () => {
         requestAnimationFrame(render);
@@ -108,6 +110,27 @@ const initHeroCanvas = () => {
                 targetRadius += reaction * 4.5; // Grow larger
                 alpha = Math.min(1, alpha + reaction); // Max opacity
                 isHovered = true;
+
+                if (!p.orig.wasHovered) {
+                    p.orig.wasHovered = true;
+                    // Spawn blast
+                    if (Math.random() > 0.3) {
+                        for (let b = 0; b < 4; b++) {
+                            const angle = Math.random() * Math.PI * 2;
+                            const speed = Math.random() * 5 + 2;
+                            blasts.push({
+                                x: p.x,
+                                y: p.y,
+                                vx: Math.cos(angle) * speed,
+                                vy: Math.sin(angle) * speed,
+                                life: 1.0,
+                                decay: Math.random() * 0.06 + 0.03
+                            });
+                        }
+                    }
+                }
+            } else {
+                p.orig.wasHovered = false;
             }
 
             // Lerp radius for smooth transitions
@@ -128,6 +151,26 @@ const initHeroCanvas = () => {
             
             ctx.fill();
         });
+
+        // Render Blasts
+        ctx.shadowBlur = 0;
+        for (let i = blasts.length - 1; i >= 0; i--) {
+            const b = blasts[i];
+            b.x += b.vx;
+            b.y += b.vy;
+            b.life -= b.decay;
+
+            if (b.life <= 0) {
+                blasts.splice(i, 1);
+            } else {
+                ctx.beginPath();
+                ctx.moveTo(b.x, b.y);
+                ctx.lineTo(b.x - b.vx * 1.5, b.y - b.vy * 1.5);
+                ctx.strokeStyle = `rgba(255, 223, 115, ${b.life})`;
+                ctx.lineWidth = Math.max(0.5, b.life * 2);
+                ctx.stroke();
+            }
+        }
     };
 
     render();
